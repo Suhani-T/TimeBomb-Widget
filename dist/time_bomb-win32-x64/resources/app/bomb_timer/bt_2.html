@@ -1,0 +1,122 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    
+    <style>
+        .orbitron-time-numbers {
+            font-family: "Orbitron", serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-style: normal;
+            /* color:rgb(56, 73, 255); */
+            color:rgb(2, 207, 22);
+        }
+        .bomb_clock{
+            border:2px solid purple;
+            display:inline-flex;
+
+        }
+        .body{
+            background-color: black;
+        }
+        .timer{
+            display:flex;
+            width:81px;
+            height:28px;
+            border:4px solid black;
+            background-color:rgb(12, 15, 16);
+            position:absolute;
+            top:38px;
+            left:112px;
+            border-radius:4px;
+            box-shadow:0px -0.7px 6px 0.8px rgb(51, 221, 63);
+
+            justify-content:space-between;
+            align-items:center;
+            
+        }
+
+        .bomb_pic{
+            position:relative;
+            display:inline;
+        }
+        .stack_top {
+            z-index:9;
+        }
+        
+        .digital_clock{
+            /* color:rgb(245, 235, 252); */
+            /* color: */
+        }
+        .start_btn{
+            all:unset;
+            color:white;
+            width:16px;
+            height:14px;
+            background-color:darkred;
+            border-radius:4px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:small;
+        }
+
+    </style>
+</head>
+
+
+<body>
+    <div class="bomb_clock">
+        <div class="bomb_pic">
+            <img id="bomb" src = "bomb_picture_2.png" width="255px" height="110px">
+        </div>
+        
+        <div class="timer stack_top">
+            <div id ="digital_clock" class="digital_clock  orbitron-time-numbers">
+                <!-- <input id="" type="number">:<input type="number"> -->
+            </div>
+            <button type="button" id="start_btn" class="start_btn"><div class="start_btn">⚠︎</div></button>
+        </div>
+
+    </div>
+
+    <script>
+        let countdown;
+        let time_left= 40;
+
+        let clock_time = document.getElementById("digital_clock");
+        let start_button = document.getElementById("start_btn");
+
+        function start_countdown(){
+            clearInterval(countdown);
+
+            countdown = setInterval( () => {
+                if(time_left <=0){
+                    clearInterval(countdown);
+                    clock_time.textContent = "00:00";
+                    alert("Times's Up");
+                    return;
+                    
+                }
+            time_left--;
+
+            const mins=Math.floor(time_left / 60);
+            const secs= time_left % 60;
+
+            clock_time.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+            }, 1000);
+        }
+
+        start_button.addEventListener("click", start_countdown);
+
+    </script>
+    
+</body>
+</html> -->

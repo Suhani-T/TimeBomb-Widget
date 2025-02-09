@@ -1,0 +1,14 @@
+{
+  "name": "time_bomb",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . time_bomb --platform=win32 --arch=x64 --out=dist --overwrite --icon=bomb_timer/bomb_icon.ico"
+  },
+  "dependencies": {
+    "electron": "^34.0.1"
+  },
+  "devDependencies": {
+    "electron-packager": "^17.1.2"
+  }
+}

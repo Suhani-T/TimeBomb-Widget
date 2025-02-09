@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    
+    <style>
+        #draggable-header{
+            -webkit-app-region: drag; /* Allows this area to be draggable */
+            cursor:grabbing;/* Change cursor to indicate it's draggable */
+            width:100px;
+            height:30px;
+            border-radius:2px;
+            background-color:transparent;
+            border:0.8px solid rgb(0, 0, 0);
+            position:absolute;
+            left:105px;
+            top:75px;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+        }
+        #alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: transparent;
+            padding: 20px;
+            z-index:10;
+        }
+        .hidden{
+            visibility: hidden;
+        }
+
+        .orbitron-time-numbers {
+            font-family: "Orbitron", serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-style: normal;
+            /* color:rgb(56, 73, 255); */
+        }
+
+        .time_available{
+            color:rgb(2, 207, 22);
+
+        }
+        .time_unavailable{
+            color:rgb(228, 48, 3);
+
+        }
+        .bomb_clock{
+            /* border:2px solid purple; */
+            display:inline-flex;
+
+        }
+        .body{
+            background-color: black;
+        }
+        .timer{
+            display:flex;
+            width:81px;
+            height:28px;
+            border:4px solid black;
+            background-color:rgb(0, 0, 0);
+            position:absolute;
+            top:38px;
+            left:112px;
+            border-radius:4px;
+            box-shadow:0px -0.7px 6px 0.8px rgb(51, 221, 63);
+
+            justify-content:space-between;
+            align-items:center;
+            
+        }
+
+        .bomb_pic{
+            position:relative;
+            display:inline;
+        }
+        .stack_top {
+            z-index:9;
+        }
+        
+        .digital_clock{
+            width:80px;
+            /* border:2px solid blue; */
+            display:flex;
+        }
+        .start_btn{
+            all:unset;
+            color:white;
+            width:14px;
+            height:12px;
+            background-color:rgb(255, 3, 3);
+            box-shadow:0px 0px 7px  2px rgb(236, 1, 1);
+            border-radius:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:smaller;
+        }
+
+        .start_btn:hover{
+            background-color:rgb(61, 225, 6);
+            box-shadow:0px 0px  4px 2px rgb(109, 255, 5);
+        }
+
+        #minute_input,
+        #second_input{
+            all:unset;
+            width:28px;            
+        }
+        .left_of_timer{
+            /* border:2px solid pink;  */
+            display:inline;
+            position:absolute;
+            top:48px;
+            left:94px; 
+            
+        }
+        .pause_btn{
+            all:unset;
+            background-color:rgb(49, 46, 255);
+            border-radius:20px;
+            box-shadow:0px 0px 4px 4px rgb(28, 32, 254);
+            width: 12px;
+            height: 12px;
+        }
+        .pause_btn:hover{
+            background-color:rgb(250, 23, 23);
+            box-shadow:0px 0px 4px 4px rgb(230, 43, 10);
+        }
+        .paused{
+            background-color:rgb(250, 23, 23);
+            box-shadow:0px 0px 4px 4px rgb(230, 43, 10);
+        }
+        .sounds{
+            all:unset;
+        }
+
+    </style>
+</head>
+
+
+<body>
+    <div class="bomb_clock">
+        <div class="bomb_pic" >
+            <img id="bomb" src = "bomb_timer/bomb_picture_2.png" width="255px" height="110px">
+        </div>
+
+        <div id="draggable-header"></div>
+
+        <div class="left_of_timer">
+            <button type="button" id="pause_btn" class="pause_btn"></button>
+        </div>
+        
+        <div class="timer stack_top">
+            <div id ="digital_clock" class="digital_clock  orbitron-time-numbers time_available">
+            
+                <input id="minute_input" type="number" min="0" max="59" placeholder="00">:
+                <input id="second_input" type="number" min="0" max="59" placeholder="00">
+            </div>
+            <button type="button" id="start_btn" class="start_btn"><div class="start_btn">⚠︎</div></button>
+
+        </div>
+
+        <audio class="sounds" controls>
+            <source src="bomb_timer/beep-letsgo.mp3" type="audio/mpeg">
+        </audio>
+
+        <audio class="sounds" controls>
+            <source src="bomb_timer/beep-boom.mp3" type="audio/mpeg">
+        </audio>
+
+        
+    </div>
+
+    <div id="alert" class="hidden">
+        <img src="explosion_gif.gif"  alt="Alert GIF" />
+    </div>
+
+    <script>
+        // const { remote } = require('electron');
+        // const currentWindow = remote.getCurrentWindow();
+
+
+        // This will allow you to drag the window anywhere
+        document.getElementById('digital_clock').addEventListener('mousedown', (e) => {
+            currentWindow.setBounds({
+                x: e.screenX,
+                y: e.screenY
+            });
+        });
+
+        let countdown;
+        is_paused = false;
+    
+        let clock_time = document.getElementById("digital_clock");
+        let start_button = document.getElementById("start_btn");
+        let pause_button = document.getElementById("pause_btn");
+
+        let beep_boom = new Audio('bomb_timer/beep-boom.mp3'); // Ensure the path is correct
+        
+
+        function start_countdown(){
+            clearInterval(countdown);
+
+            let minute_input = parseInt(document.getElementById("minute_input").value);
+            let second_input = parseInt(document.getElementById("second_input").value);
+
+            if (isNaN(minute_input)) {minute_input = 0;}
+            if (isNaN(second_input)) {second_input = 0;}
+            
+            let time_left = (minute_input*60)+second_input;
+
+            if (time_left){
+                startTimer();
+            }
+
+            countdown = setInterval( () => {
+                if (is_paused){
+                    pause_btn.classList.add("paused");
+                    return;
+                }
+                pause_btn.classList.remove("paused");
+
+                if(time_left <= 11){
+                    clock_time.classList.add("time_unavailable");
+                }
+                if(time_left <= 4){
+                    beep_boom.play();
+                }
+                
+                if(time_left <= 0){
+                    clearInterval(countdown);
+                    clock_time.textContent = "00:00";
+                    show_alert();
+                    clock_time.classList.remove("time_unavailable");
+
+                    return;
+                    
+                }
+            time_left--;
+
+            const mins=Math.floor(time_left / 60);
+            const secs= time_left % 60;
+
+            clock_time.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+            }, 1000);
+        }
+
+        function pause_countdown(){
+            is_paused = !is_paused
+        }
+
+        start_button.addEventListener("click", start_countdown);
+        pause_button.addEventListener("click", pause_countdown);
+
+        function show_alert(){
+            let gif = document.getElementById("alert");
+            gif.classList.remove("hidden");
+            gif.style.display="block";
+
+            setTimeout(() => {
+                gif.classList.add("hidden");
+            },800);
+        }
+
+        function startTimer() {
+        // Play beep sound when timer starts
+        let letsgo = new Audio('bomb_timer/beep-letsgo.mp3'); // Ensure the path is correct
+        letsgo.play();
+        }
+        
+
+    // Your existing timer logic here...
+
+
+    // // Override the default alert function
+    //     window.alert = function(message) {
+    //         // Create a custom modal div
+    //         let modal = document.createElement('div');
+    //         modal.style.position = 'fixed';
+    //         modal.style.top = '50%';
+    //         modal.style.left = '50%';
+    //         modal.style.transform = 'translate(-50%, -50%)';
+    //         modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    //         modal.style.color = '#fff';
+    //         modal.style.padding = '20px';
+    //         modal.style.borderRadius = '10px';
+    //         modal.style.zIndex = '1000';
+    //         modal.style.fontSize = '20px';
+    //         modal.innerText = message;
+    //         modal.style.fontFamily = 'Courier';
+
+    //         // Add the modal to the body
+    //         document.body.appendChild(modal);
+
+    //         // Close the modal after 3 seconds
+    //         setTimeout(() => {
+    //             modal.remove();
+    //         }, 3000);
+    //     };
+
+        const { ipcRenderer } = require('electron');
+        document.getElementById('digital_clock').addEventListener('mousedown', (e) => {
+            ipcRenderer.send('move-window', { x: e.screenX, y: e.screenY });
+        });
+
+
+    </script>
+    
+</body>
+</html>
