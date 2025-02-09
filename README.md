@@ -1,5 +1,5 @@
 # TimeBomb-Widget
-TimeBomb Widget is a fun countdown timer widget with fun beep sounds to notify the cowntown has started and a BOOM to notfify the timer has ended.
+TimeBomb Widget resembles a classic dynamite bomb, with a bold red interface and a digital countdown display at its center with fun beep sounds to notify the cowntown has started and a BOOM to notfify the timer has ended.
 
 ## How to Use:
 * To open the widget double click on the executable file. I suggest you pin the icon to taskbar for easy access.
